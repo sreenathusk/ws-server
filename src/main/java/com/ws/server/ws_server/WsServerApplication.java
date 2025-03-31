@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
+import static com.ws.server.ws_server.RestController.getResponse;
+
 @SpringBootApplication
 @EnableWebSocket
 public class WsServerApplication implements WebSocketConfigurer {
@@ -53,8 +55,8 @@ class MyWebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        String timestampedMessage = payload + " - " + LocalDateTime.now().format(formatter);
-        session.sendMessage(new TextMessage(timestampedMessage));
+//        String timestampedMessage = payload + " - " + LocalDateTime.now().format(formatter);
+        session.sendMessage(new TextMessage(getResponse(payload)));
     }
 
     @Override
@@ -75,7 +77,7 @@ class RestController {
         return ResponseEntity.ok(getResponse(message));
     }
 
-    private String getResponse(String message) {
+    public static String getResponse(String message) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             Map<String, Object> request = mapper.readValue(message, Map.class);
